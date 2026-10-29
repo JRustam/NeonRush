@@ -1,0 +1,29 @@
+# Gradle, Kotlin and Android build output
+.gradle/
+.kotlin/
+**/build/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+
+# Local SDK paths, IDE and machine state
+local.properties
+.idea/
+*.iml
+.DS_Store
+captures/
+*.log
+
+# Signing material and local secrets
+*.jks
+*.keystore
+keystore.properties
+.env
+.env.*
+
+# Optional audio-authoring Python environment
+.venv/
+__pycache__/
+*.pyc
