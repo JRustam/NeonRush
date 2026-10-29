@@ -16,8 +16,25 @@ sealed class EntityKind {
     data object Energy : EntityKind()
     data class Power(val pickup: Pickup) : EntityKind()
 }
-data class Entity(val id: Long, val x: Float, val y: Float, val radius: Float, val speed: Float, val kind: EntityKind)
-data class Particle(val x: Float, val y: Float, val vx: Float, val vy: Float, val life: Float, val pink: Boolean)
+
+data class Entity(
+    val id: Long,
+    val x: Float,
+    val y: Float,
+    val radius: Float,
+    val speed: Float,
+    val kind: EntityKind
+)
+
+data class Particle(
+    val x: Float,
+    val y: Float,
+    val vx: Float,
+    val vy: Float,
+    val life: Float,
+    val pink: Boolean
+)
+
 data class GameFrame(
     val playerX: Float = 180f,
     val elapsed: Float = 0f,
@@ -39,14 +56,20 @@ fun Float.inArena() = coerceIn(24f, WORLD_WIDTH - 24f)
 object Scoring {
     const val ENERGY_POINTS = 50
     fun energy(multiplied: Boolean): Int = ENERGY_POINTS * if (multiplied) 2 else 1
-    fun survival(seconds: Float, multiplied: Boolean): Float = seconds * 10 * if (multiplied) 2 else 1
+    fun survival(seconds: Float, multiplied: Boolean): Float =
+        seconds * 10 * if (multiplied) 2 else 1
 }
 
 object Collision {
-    fun nearMiss(previousY: Float, nextY: Float, horizontalGap: Float, hazardRadius: Float): Boolean =
+    fun nearMiss(
+        previousY: Float,
+        nextY: Float,
+        horizontalGap: Float,
+        hazardRadius: Float
+    ): Boolean =
         previousY <= PLAYER_Y && nextY > PLAYER_Y &&
-            abs(horizontalGap) > PLAYER_RADIUS + hazardRadius &&
-            abs(horizontalGap) < PLAYER_RADIUS + hazardRadius + 50f
+                abs(horizontalGap) > PLAYER_RADIUS + hazardRadius &&
+                abs(horizontalGap) < PLAYER_RADIUS + hazardRadius + 50f
 
     /** Relative swept circles: catches fast objects and player motion between simulation steps. */
     fun sweptCircles(ax: Float, ay: Float, bx: Float, by: Float, radius: Float): Boolean {
@@ -77,7 +100,10 @@ class GameEngine(private val random: Random = Random.Default) {
         frame = GameFrame(); targetX = 180f; points = 0.0
         spawnIn = .6f; energyIn = .8f; powerIn = 7f; grace = 0f; nextId = 0
     }
-    fun moveTo(x: Float) { targetX = x.inArena() }
+
+    fun moveTo(x: Float) {
+        targetX = x.inArena()
+    }
 
     fun advance(seconds: Float) {
         if (frame.ended || !seconds.isFinite() || seconds <= 0f) return
@@ -105,29 +131,57 @@ class GameEngine(private val random: Random = Random.Default) {
         points += Scoring.survival(dt, multiplier > 0f)
         val entities = ArrayList<Entity>()
         val particles = old.particles.mapNotNullTo(ArrayList()) {
-            if (it.life <= dt) null else it.copy(x = it.x + it.vx * dt, y = it.y + it.vy * dt, life = it.life - dt)
+            if (it.life <= dt) null else it.copy(
+                x = it.x + it.vx * dt,
+                y = it.y + it.vy * dt,
+                life = it.life - dt
+            )
         }
+
         fun burst(px: Float, py: Float, pink: Boolean) {
             repeat(14) {
                 val angle = random.nextFloat() * 2f * PI.toFloat()
                 val velocity = 30f + random.nextFloat() * 105f
-                particles.add(Particle(px, py, cos(angle) * velocity, sin(angle) * velocity, .5f + random.nextFloat() * .3f, pink))
+                particles.add(
+                    Particle(
+                        px,
+                        py,
+                        cos(angle) * velocity,
+                        sin(angle) * velocity,
+                        .5f + random.nextFloat() * .3f,
+                        pink
+                    )
+                )
             }
         }
         for (entity in old.entities) {
             val moved = entity.copy(y = entity.y + entity.speed * worldDt)
-            val hit = Collision.sweptCircles(entity.x - old.playerX, entity.y - PLAYER_Y,
-                moved.x - x, moved.y - PLAYER_Y, PLAYER_RADIUS + entity.radius)
+            val hit = Collision.sweptCircles(
+                entity.x - old.playerX, entity.y - PLAYER_Y,
+                moved.x - x, moved.y - PLAYER_Y, PLAYER_RADIUS + entity.radius
+            )
             if (hit) {
                 when (val kind = entity.kind) {
                     EntityKind.Hazard -> {
                         if (grace <= 0f) {
-                            if (shield > 0f) { shield = 0f; grace = .8f; flash = .5f; events.add(GameEvent.SHIELD_BROKEN) }
-                            else { dead = true; flash = 1f; events.add(GameEvent.CRASH) }
+                            if (shield > 0f) {
+                                shield = 0f; grace = .8f; flash =
+                                    .5f; events.add(GameEvent.SHIELD_BROKEN)
+                            } else {
+                                dead = true; flash = 1f; events.add(GameEvent.CRASH)
+                            }
                         }
                         burst(moved.x, moved.y, true)
                     }
-                    EntityKind.Energy -> { points += Scoring.energy(multiplier > 0f); orbs++; events.add(GameEvent.ENERGY_COLLECTED); burst(moved.x, moved.y, false) }
+
+                    EntityKind.Energy -> {
+                        points += Scoring.energy(multiplier > 0f); orbs++; events.add(GameEvent.ENERGY_COLLECTED); burst(
+                            moved.x,
+                            moved.y,
+                            false
+                        )
+                    }
+
                     is EntityKind.Power -> {
                         events.add(GameEvent.POWER_ACTIVATED)
                         when (kind.pickup) {
@@ -140,27 +194,60 @@ class GameEngine(private val random: Random = Random.Default) {
                 }
             } else if (moved.y < WORLD_HEIGHT + 30) {
                 entities.add(moved)
-                if (entity.kind == EntityKind.Hazard && Collision.nearMiss(entity.y, moved.y, moved.x - x, entity.radius)) {
+                if (entity.kind == EntityKind.Hazard && Collision.nearMiss(
+                        entity.y,
+                        moved.y,
+                        moved.x - x,
+                        entity.radius
+                    )
+                ) {
                     events.add(GameEvent.NEAR_MISS)
                 }
             }
         }
         fun spawn(kind: EntityKind, radius: Float, speed: Float) {
             // One hazard per wave always leaves room to dodge, even at maximum difficulty.
-            entities.add(Entity(nextId++, 28f + random.nextFloat() * 304f, -25f, radius, speed, kind))
+            entities.add(
+                Entity(
+                    nextId++,
+                    28f + random.nextFloat() * 304f,
+                    -25f,
+                    radius,
+                    speed,
+                    kind
+                )
+            )
         }
         spawnIn -= worldDt
         energyIn -= worldDt
         powerIn -= dt
         if (spawnIn <= 0f) {
-            spawn(EntityKind.Hazard, 16f + random.nextFloat() * 7f, (150f + time * 2.1f).coerceAtMost(340f))
+            spawn(
+                EntityKind.Hazard,
+                16f + random.nextFloat() * 7f,
+                (150f + time * 2.1f).coerceAtMost(340f)
+            )
             spawnIn += (.84f - time * .004f).coerceAtLeast(.30f)
         }
-        if (energyIn <= 0f) { spawn(EntityKind.Energy, 8f, 140f); energyIn += 1.15f }
+        if (energyIn <= 0f) {
+            spawn(EntityKind.Energy, 8f, 140f); energyIn += 1.15f
+        }
         if (powerIn <= 0f) {
             spawn(EntityKind.Power(Pickup.entries.random(random)), 12f, 115f)
             powerIn += 9f
         }
-        frame = GameFrame(x, time, points.toInt(), orbs, shield, slow, multiplier, entities, particles.takeLast(160), dead, flash)
+        frame = GameFrame(
+            x,
+            time,
+            points.toInt(),
+            orbs,
+            shield,
+            slow,
+            multiplier,
+            entities,
+            particles.takeLast(160),
+            dead,
+            flash
+        )
     }
 }

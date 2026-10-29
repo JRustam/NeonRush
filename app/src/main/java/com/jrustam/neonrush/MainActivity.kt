@@ -22,7 +22,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject lateinit var audio: GameAudio
+    @Inject
+    lateinit var audio: GameAudio
 
     private val game: GameViewModel by viewModels()
 
@@ -44,7 +45,14 @@ class MainActivity : ComponentActivity() {
                     setForeground(true)
                 }
                 try {
-                    launch { game.preferences.collect { audio.setVolumes(it.musicVolume, it.sfxVolume) } }
+                    launch {
+                        game.preferences.collect {
+                            audio.setVolumes(
+                                it.musicVolume,
+                                it.sfxVolume
+                            )
+                        }
+                    }
                     launch { game.screen.collect { audio.setSceneMusic(it == Screen.Menu || it == Screen.Settings || it == Screen.Playing) } }
                     launch { game.sounds.collect(audio::play) }
                     kotlinx.coroutines.awaitCancellation()
@@ -56,7 +64,9 @@ class MainActivity : ComponentActivity() {
         setContent { NeonRushTheme { NeonRushApp(game) } }
     }
 
-    override fun onDestroy() { audio.close(); super.onDestroy() }
+    override fun onDestroy() {
+        audio.close(); super.onDestroy()
+    }
 
     override fun onPause() {
         audio.setForeground(false)

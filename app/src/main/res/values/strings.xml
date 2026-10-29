@@ -1,3 +1,70 @@
 <resources>
     <string name="app_name">Neon Rush</string>
+
+    <string name="signal_paused">"SIGNAL PAUSED"</string>
+    <string name="pause_title">"Take a breath."</string>
+    <string name="pause_subtitle">"The city can wait."</string>
+    <string name="resume_run">"RESUME RUN"</string>
+    <string name="arcade_brand" translatable="false">"NR / ARCADE SYSTEMS"</string>
+    <string name="menu_number" translatable="false">"01"</string>
+    <string name="menu_eyebrow">"ENTER THE AFTERLIGHT"</string>
+    <string name="title_neon" translatable="false">"NEON"</string>
+    <string name="title_rush" translatable="false">"RUSH"</string>
+    <string name="menu_tagline">"Stay sharp. Burn bright. Survive."</string>
+    <string name="personal_best">"PERSONAL BEST"</string>
+    <string name="high_score">"HIGH SCORE"</string>
+    <string name="start_run">"START RUN   →"</string>
+    <string name="settings">"SETTINGS"</string>
+    <string name="collect">"COLLECT"</string>
+    <string name="dodge">"DODGE"</string>
+    <string name="power_up">"POWER UP"</string>
+    <string name="menu_controls_hint">"DRAG TO MOVE  /  SURVIVE THE GRID"</string>
+    <string name="game_brand" translatable="false">"NEON RUSH"</string>
+    <string name="game_controls_hint">"←  DRAG TO STEER  →"</string>
+    <string name="score">"SCORE"</string>
+    <string name="sector">"SECTOR"</string>
+    <string name="shield">"SHIELD"</string>
+    <string name="slow">"SLOW"</string>
+    <string name="score_multiplier">"2× SCORE"</string>
+    <string name="end_run_return">"END RUN &amp; RETURN"</string>
+    <string name="run_complete">"RUN COMPLETE"</string>
+    <string name="signal_lost">"SIGNAL LOST"</string>
+    <string name="game_over_subtitle">"One more run. One step further."</string>
+    <string name="new_personal_best">"✦  NEW PERSONAL BEST  ✦"</string>
+    <string name="final_score">"FINAL SCORE"</string>
+    <string name="survived">"SURVIVED"</string>
+    <string name="energy">"ENERGY"</string>
+    <string name="all_time_best">"ALL-TIME BEST"</string>
+    <string name="retry_run">"RUN IT BACK   →"</string>
+    <string name="main_menu">"MAIN MENU"</string>
+    <string name="back_main_menu">"←  MAIN MENU"</string>
+    <string name="system_configuration">"SYSTEM CONFIGURATION"</string>
+    <string name="music">"Music"</string>
+    <string name="sound_effects">"Sound effects"</string>
+    <string name="particle_effects">"Particle effects"</string>
+    <string name="particle_effects_description">"Energy bursts and collision sparks"</string>
+    <string name="haptic_feedback">"Haptic feedback"</string>
+    <string name="haptic_feedback_description">"Feel energy pickups and impacts"</string>
+    <string name="how_to_survive">"HOW TO SURVIVE"</string>
+    <string name="gameplay_instructions">"Drag anywhere in the arena to steer. Avoid pink hazards and collect cyan energy for 50 points. Surviving earns 10 points per second. Each sector gets faster."</string>
+    <string name="shield_heading">"S   SHIELD"</string>
+    <string name="shield_description">"Blocks one hit. Lasts up to 12 seconds."</string>
+    <string name="slow_heading">"~   SLOW MOTION"</string>
+    <string name="slow_description">"Slows the grid for 6 seconds. You stay fast."</string>
+    <string name="multiplier_heading">"2×   SCORE MULTIPLIER"</string>
+    <string name="multiplier_description">"Doubles all points for 8 seconds."</string>
+    <string name="save_and_pause_description">"Progress saves automatically on this device.\nLeaving the app pauses your run."</string>
+    <string name="version_label" translatable="false">"NEON RUSH  /  v1.0"</string>
+    <string name="muted">"Muted"</string>
+    <string name="pause_game">"Pause game"</string>
+    <string name="power_up_countdown">"%1$s %2$ss"</string>
+    <string name="duration_seconds">"%1$ss"</string>
+    <string name="volume_percentage">"%1$s%%"</string>
+    <string name="volume_description">"%1$s volume"</string>
+    <string name="arena_description">"Game arena. Drag horizontally to dodge pink hazards and collect cyan energy orbs."</string>
+    <string name="arena_intro_hint">"KEEP MOVING. STAY ALIVE."</string>
+    <string name="shield_symbol" translatable="false">"S"</string>
+    <string name="slow_symbol" translatable="false">"~"</string>
+    <string name="multiplier_symbol" translatable="false">"2×"</string>
+    <string name="error_save">"Could not save to device. Please check available storage."</string>
 </resources>
